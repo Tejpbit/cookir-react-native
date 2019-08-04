@@ -2,14 +2,21 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import Toast from "react-native-simple-toast";
-import { createAppContainer } from "react-navigation";
+import { createAppContainer, createStackNavigator } from "react-navigation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { getRecipes, Recipe } from "./src/backend";
 import { Screen } from "./src/common/Screen";
 import { RecipeListItem } from "./src/RecipeListItem";
+import { RecipeView } from "./src/RecipeView";
 
-const HomeScreen = () => {
+const HomeScreen = props => {
   const [recipes, setRecipes] = useState([]);
+
+  const onRecipeItemPressed = (recipe: Recipe) => {
+    props.navigation.navigate("Recipe", {
+      recipe
+    });
+  };
 
   useEffect(() => {
     getRecipes()
@@ -24,11 +31,33 @@ const HomeScreen = () => {
     <Screen>
       <Text>Recipes</Text>
       {recipes.map((r: Recipe) => (
-        <RecipeListItem key={r.Id} recipe={r} />
+        <RecipeListItem
+          key={r.Id}
+          recipe={r}
+          onGotoPressed={() => onRecipeItemPressed(r)}
+        />
       ))}
     </Screen>
   );
 };
+
+const StackNavigator = createStackNavigator({
+  Home: {
+    screen: HomeScreen,
+    navigationOptions: {
+      title: "Recipes"
+    }
+  },
+  Recipe: {
+    screen: RecipeView,
+    navigationOptions: {
+      title: "Recipe",
+      tabBarIcon: ({ tintColor }) => (
+        <Ionicons name="md-home" size={24} color="white" />
+      )
+    }
+  }
+});
 
 const SettingsScreen = () => {
   return (
@@ -40,10 +69,8 @@ const SettingsScreen = () => {
 
 const TabNavigator = createMaterialBottomTabNavigator({
   Home: {
-    screen: HomeScreen,
+    screen: StackNavigator,
     navigationOptions: {
-      title: "Home",
-      tabBarLabel: "Home Page",
       tabBarIcon: ({ tintColor }) => (
         <Ionicons name="md-home" size={24} color="white" />
       )

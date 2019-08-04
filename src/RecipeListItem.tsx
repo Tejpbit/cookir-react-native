@@ -3,11 +3,7 @@ import React from "react";
 import { Alert, Text, View } from "react-native";
 import styled from "styled-components";
 
-export const RecipeListItem = ({ recipe }) => {
-  const goToRecipe = () => {
-    Alert.alert("Navigate to recipe");
-  };
-
+export const RecipeListItem = ({ recipe, onGotoPressed }) => {
   return (
     <Container>
       <View />
@@ -17,7 +13,7 @@ export const RecipeListItem = ({ recipe }) => {
           name="md-arrow-dropright-circle"
           size={48}
           color="black"
-          onPress={goToRecipe}
+          onPress={onGotoPressed}
         />
       </GoToRecipeContainer>
     </Container>
